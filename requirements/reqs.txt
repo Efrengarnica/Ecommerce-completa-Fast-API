@@ -1,0 +1,60 @@
+# Cada vez que agregas algo aquí debes de detener, reconstruir solo el contenedor de la app y levantar de nuevo.
+# Para que el contenedor sepa, si intalas algo directamente dentro del contenedor con docker exec -it nombre pip install eso lo instala 
+# momentaneamente para que no tengas problemas pero si lo haces de esa manera debes de agregarlo también aquí ya que cuando detienes el contenedor
+# y lo levantas ya no lo tendrás, entonces por eso se pone aqui para que si lo paras vuelvas a recontruir y levantar y lo tengas.
+
+# Me permite tener FastApi.
+fastapi==0.115.12
+
+#Me permite tener uvicorn.
+uvicorn==0.34.0  
+
+#Me permite tener unos comandos para manejar Fast Api.
+fastapi-cli==0.0.7
+
+#Me permite hashear y verificar contraseñas.
+passlib==1.7.4
+
+#form data, permite aceptar formatos de fórmularios.
+python-multipart==0.0.20
+
+#dotenv, me permite que mi app sepa detectar .env y pueda usar lo que hay dentro en todo la app.
+python-dotenv>=1.0.0
+
+# conexión AWS, me permite comunicarme con servicios de AWS.
+boto3==1.35.87
+
+#pydantic
+#Me permite tener pydantic, es decir una manera de verificar si algo tiene una forma deseada.
+pydantic==2.9.2
+#Cosas extras de pydantic.
+pydantic-settings==2.5.2
+pydantic_core==2.23.4
+
+#slug, me permite convertir cadenas en formato slug que puede ser usado en urls.
+python-slugify==8.0.4
+
+#bcrypt, algoritmo para hashear, se suele usar con passlib.
+bcrypt==4.3.0
+
+#jwt
+# Libreria que me ayuda a poder generar tokens y verificar tokens.
+python-jose[cryptography]==3.1.0
+
+#Base de datos
+#Driver para comunicación sincrona con PostgresSQL.
+psycopg2-binary==2.9.9
+#Permite que pueda tener "modelos" que también se apoyan de pydantic.
+sqlmodel==0.0.24
+#Poder hacer nuevos modelos, se detectan y se pueden implementar en la base de datso con pocos comandos.
+alembic>=1.13.1
+#Driver para conexión sincrona.
+asyncpg==0.29.0  
+
+#Comandos útiles:
+# Estos comandos se hacen dentro de la carpeta que tiene a "docker-compose.yml"
+# docker exec -it contenedor_ecommerce_app pip install passlib
+# docker-compose stop ecommerce_app(nombre del servicio)    Parar el servicio.
+# docker-compose build ecommerce_app                        Reconstruir el servicio.
+# docker-compose up -d --no-deps ecommerce_app              Levantar únicamente el servicio de la app, sin reiniciar Postgres.
+# docker exec -it contenedor_ecommerce
