@@ -1,0 +1,31 @@
+# --- Variables de Entorno (Seguridad) ---
+.env
+.env.*
+!.env.example
+
+# --- Docker & Persistencia ---
+# Ignora la carpeta de datos de LocalStack definida en tu compose
+localstack-data/
+# Si alguna vez cambias pgdata a una ruta local (bind mount), ignórala aquí
+# postgres_data/
+
+# --- Python (FastAPI) ---
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# --- Otros ---
+.vscode/
+.idea/
+*.log
+*.tmp
+.DS_Store
+
+# Ignorar dependencias instaladas por pip en modo editable
+*.egg-info/
