@@ -1,1 +1,1 @@
-# Ecommerce-completa-Fast-API
+Este repositorio es para crear 3 contenedores, en ellos estarán presentes fastAPI, localStack y postgresql, con la finalidad de simular un entorno verdadero, de manera local.
