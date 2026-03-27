@@ -1,0 +1,89 @@
+ #Define cuantos servicios independientes voy a tratar de realizar.
+services:
+  #Primer servicio
+  postgres:
+    image: postgres:15
+    container_name: contenedor_ecommerce_postgres
+    #Si el contenedor se llega a detener docker tratará de volverlo a activar.
+    restart: always
+    #Necesarias para iniciar la base de datos, aqui menciona que si no la encuentra en el env le ponga eso por defecto.
+    environment:
+      - POSTGRES_USER=${DB_USER:-postgres}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-postgres}
+      - POSTGRES_DB=${DB_DATABASE:-ecommerce_db}
+    #Creas una comunicacion entre el puerto de tu compu y el contenedor.
+    ports:
+      - "5432:5432"
+    #Defines un lugar en donde se guarda la info para que sea persistente.
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    #Haces que los contenedores formen parten de un grupo y puedan hablarse por medio de su nombre del contenedor.
+    networks:
+      - red_fastapi
+
+  #Segundo servicio, Pyhton.
+  ecommerce_api:
+    #El build construye el contenedor con las instrucciones del dockerfile.
+    build:
+      #Le dices donde empezar a buscar las cosas.
+      context: .
+      #Le pasas el directorio y el documento en donde estén las cosas que instalarás en tu contenedor.
+      args:
+        requirements: requirements/reqs.txt
+    container_name: contenedor_ecommerce_api
+    #Le dice al contenedor que se quede abierto para que podamos interactuar con el.
+    tty: true
+    #Le dice que hay un env que va tener que tomar en cuenta.
+    env_file:
+      - .env
+    #Le dice que asocie cierta carpeta con una dentro del contenedor.
+    volumes:
+      - .:/app:delegated
+    # Crea conexion entre el puerto 8050 al 8001.
+    ports:
+      - "8050:8001"
+    #Le dice al contenedor que cualquier accion que llegue del 8001 se la pase a main:app ie FastApi.
+    command: sh -c "uvicorn main:app --host 0.0.0.0 --port 8001 --reload"
+    environment:
+        #En desarrollo ayuda a ver lo que falla de la app.
+      - DEBUG=True
+      - PYTHONUNBUFFERED=1
+      # Asegúrate que estas variables en tu .env apunten a los nombres de los servicios
+      - DB_HOST=postgres
+      - DB_PORT=5432
+    #Espera a que los demás esten y luego me creas a mi.
+    depends_on:
+      - postgres
+      - localstack
+    #Se hace parte del grupo.
+    networks:
+      - red_fastapi
+    
+  localstack:
+    image: localstack/localstack:3   # Cambié el latest por la versión 3, ya que el latest me pedía subscripción.
+    container_name: localstack
+    restart: always
+    environment:
+      - SERVICES=sqs,lambda,ses,s3,dynamodb
+      - AWS_DEFAULT_REGION=us-west-2
+      - DEBUG=1
+      - LAMBDA_EXECUTOR=local        # Use 'local' unless you specifically need Docker-in-Docker for Lambda
+      - PERSISTENCE=1                # Replaces old DATA_DIR approach
+      - AWS_ACCESS_KEY_ID=test       # LocalStack expects 'test' by default
+      - AWS_SECRET_ACCESS_KEY=test   # LocalStack expects 'test' by default
+      - SES_DISABLE_EMAIL_VERIFICATION=1
+    ports:
+      - "8000:4566"
+    volumes:
+      - "${LOCALSTACK_DATA_DIR:-./localstack-data}:/var/lib/localstack"  # Correct persistence path
+      - "/var/run/docker.sock:/var/run/docker.sock"  # Only needed if LAMBDA_EXECUTOR=docker
+    networks:
+      - red_fastapi  
+
+volumes:
+  pgdata:
+  localstack:
+  
+networks:
+  red_fastapi:
+    driver: bridge    
