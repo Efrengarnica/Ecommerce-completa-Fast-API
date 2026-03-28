@@ -1,5 +1,6 @@
 from fastapi import APIRouter, status
 from fastapi.responses import JSONResponse
+from schemas.ejemplo import EjemploDto
 
 
 #La idea es que ahora aquí se definan todos los endpoints relacionado con ejemplo.
@@ -24,13 +25,20 @@ async def show(id:int):
         content={"estado":"ok", "mensaje":f"Método GET | id={id}"}
     )
 
-
+#Aquí implementamos nuestra primera verificacion con pydantic
 @router.post("/")
+async def create(body_ejemplo:EjemploDto):
+    return JSONResponse(
+        status_code=status.HTTP_201_CREATED,
+        content={"estado":"ok", 
+                 "mensaje": f"Método POST | id:{body_ejemplo.id} | nombre:{body_ejemplo.nombre} | boleano:{body_ejemplo.boleano}"}
+    )
+""" @router.post("/")
 async def create():
     return JSONResponse(
         status_code=status.HTTP_201_CREATED,
         content={"estado":"ok", "mensaje": "Método POST"}
-    )
+    ) """
 
 
 @router.put("/{id}")
