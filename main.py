@@ -6,6 +6,7 @@ from handlers import register_exception_handlers
 
 #rutas
 from api.ejemplo_router import router as ejemplo_router
+from api.upload import router as upload_router
 
 
 # La idea es que este .py quede lo más limpio posible.
@@ -37,6 +38,7 @@ una vez levantado el servicio también se tenga que levantar uvicorn.
 
 #Decirle a la app que agregue la ruta.
 app.include_router(ejemplo_router)
+app.include_router(upload_router)
 
 
 """ Que pasa cuando a mi app llegan rutas que no están, bueno la app
