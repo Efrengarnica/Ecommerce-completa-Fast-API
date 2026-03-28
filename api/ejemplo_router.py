@@ -2,6 +2,10 @@ from fastapi import APIRouter, status
 from fastapi.responses import JSONResponse
 from schemas.ejemplo import EjemploDto
 
+#Esto sirve para poder ocupar las variables de entorno
+""" from dotenv import load_dotenv
+load_dotenv()
+import os """
 
 #La idea es que ahora aquí se definan todos los endpoints relacionado con ejemplo.
 #Primero se define el router.
@@ -11,6 +15,8 @@ router = APIRouter(prefix="/ejemplo", tags=["Ejemplo"])
 
 @router.get("/")
 async def index():
+    #Ejemplo de como funciona env
+    #print(f"El valor de la variable AWS_REGION={os.getenv("AWS_REGION")}")
     return JSONResponse(
         status_code=status.HTTP_200_OK,
         content={"De donde me hablas": "De ejemplo"}
