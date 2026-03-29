@@ -65,24 +65,24 @@ services:
     restart: always
     environment:
       - SERVICES=sqs,lambda,ses,s3,dynamodb
-      - AWS_DEFAULT_REGION=us-west-2
+      - PERSISTENCE=1
+      - PERSISTENCE_PATH=/var/lib/localstack/state
       - DEBUG=1
-      - LAMBDA_EXECUTOR=local        # Use 'local' unless you specifically need Docker-in-Docker for Lambda
-      - PERSISTENCE=1                # Replaces old DATA_DIR approach
-      - AWS_ACCESS_KEY_ID=test       # LocalStack expects 'test' by default
-      - AWS_SECRET_ACCESS_KEY=test   # LocalStack expects 'test' by default
-      - SES_DISABLE_EMAIL_VERIFICATION=1
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - LAMBDA_EXECUTOR=docker
+      - AWS_ACCESS_KEY_ID=fake
+      - AWS_SECRET_ACCESS_KEY=fake
     ports:
       - "8000:4566"
+      - "8085:8080"
     volumes:
-      - "${LOCALSTACK_DATA_DIR:-./localstack-data}:/var/lib/localstack"  # Correct persistence path
-      - "/var/run/docker.sock:/var/run/docker.sock"  # Only needed if LAMBDA_EXECUTOR=docker
+      - "./localstack-data:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
     networks:
       - red_fastapi  
 
 volumes:
   pgdata:
-  localstack:
   
 networks:
   red_fastapi:
