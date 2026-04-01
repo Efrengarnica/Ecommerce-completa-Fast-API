@@ -35,3 +35,14 @@ class ProductoCreate(BaseModel):
     nombre: str
     descripcion: str
     precio: float
+
+# Ayuda a dar formato al producto que regresamos cuando eliminamos un producto.
+class ProductoEliminadoResponse(BaseModel):
+    nombre: str
+    descripcion:str
+    precio: float
+    mensaje: str = "Producto eliminado exitosamente"
+
+    model_config = {
+    "from_attributes": True
+    }

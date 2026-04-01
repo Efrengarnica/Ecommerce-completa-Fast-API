@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Depends, Form, UploadFile, File
+from fastapi import APIRouter, Depends, Form, UploadFile, File, Query
 from typing import Annotated
 from dependencies.dependencies import get_product_service
+from dependencies.security import validate_auth
 from services.producto import ProductoService
-from schemas.producto import ProductoResponse, ProductoCreate, producto_to_response
+from schemas.producto import ProductoResponse, ProductoCreate, producto_to_response, ProductoEliminadoResponse
 
 
 router = APIRouter(prefix="/producto", tags=["Producto"])
@@ -42,4 +43,23 @@ async def create_product(
     )
     return producto_to_response(await service.create_product(producto_create, file))
 
-#Eliminar un producto.
+# Eliminar un producto.
+@router.delete("/", response_model=ProductoEliminadoResponse)
+async def delete_product_by_name(nombre:str = Query(..., description="Nombre de la imagen"), service:ProductoService = Depends(get_product_service)):
+    return await service.delete_product_by_name(nombre)
+
+
+# Este enpoint es para realizar la limpieza de la BD de registros basura.
+# Debe de llevar un token para que pueda ser ejecutado.
+@router.post("/limpieza")
+async def clean_database(
+    service: ProductoService = Depends(get_product_service),
+    _token: str = Depends(validate_auth)
+):
+    count = await service.purge_deleted_products()
+    
+    return {
+        "status": "success",
+        "message": f"Se han eliminado permanentemente {count} productos.",
+        "action": "HARD_DELETE_CLEANUP"
+    }
