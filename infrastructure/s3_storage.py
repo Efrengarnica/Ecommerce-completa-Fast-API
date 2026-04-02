@@ -40,3 +40,37 @@ def delete_image_from_s3(link:str) -> None:
         s3_client.delete_object(Bucket=S3_BUCKET_NAME, Key=f"archivos/{file_name}")
     except Exception as e:
         raise S3ImageDeleteError(file_name)
+    
+
+# Me ayuda a obtener, en una lista, todos los elementos que existen en mi S3.
+def listar_objetos_bucket(prefix: str = "archivos/") -> list[str]:
+    keys = [] # Se guarda el nombre de los archivos.
+    paginator = s3_client.get_paginator("list_objects_v2") # Se necesita para usar paginate y poder leer de 1,000 en 1,000 archivos
+
+    #Si tiene mas de 1,000 archivos para a la otra iteracion.
+    for page in paginator.paginate(Bucket=S3_BUCKET_NAME, Prefix=prefix):
+        for obj in page.get("Contents", []):
+            keys.append(obj["Key"])  # Ejemplo: "archivos/foto.jpg"
+
+    return keys
+
+
+# Me ayuda a eliminar todos los elementos huérfanos de mi bucket.
+def delete_all_trash_s3(lista_registros_imagenes: list[str]) -> int:
+ 
+    contador = 0
+
+    registros_bd = set(lista_registros_imagenes)
+
+    lista_imagenes_bucket = listar_objetos_bucket(prefix="archivos/")
+
+    for key_bucket in lista_imagenes_bucket:
+        ubicacion_imagen=f"http://localhost:8000/bucket-s3-imitacion/{key_bucket}"
+        if ubicacion_imagen not in registros_bd:
+            try:
+                s3_client.delete_object(Bucket=S3_BUCKET_NAME, Key=key_bucket)
+                contador += 1
+            except Exception as e:
+               print(f"Falla al eliminar el archivo: {key_bucket}")
+
+    return contador

@@ -2,16 +2,16 @@ from fastapi import Request, status
 from fastapi.responses import JSONResponse
 from exceptions.ejemplo_exceptions import EjemploException
 from fastapi.exceptions import RequestValidationError
-
+from pydantic import ValidationError
 # Maneja la excepcion EjemploException
-async def ejemplo_handler(request: Request, exc: EjemploException):
+""" async def ejemplo_handler(request: Request, exc: EjemploException):
     return JSONResponse(
         status_code=status.HTTP_404_NOT_FOUND,
         content={"estado":"error", "mensaje":exc.message}
-    )
+    ) """
 
 #Maneja la exception que lanza FastAPI cuando el formato de mis DTO son incorrectos y les da un formato más entendible.
-async def manejar_errores_validacion(request: Request, exc: RequestValidationError):
+""" async def manejar_errores_validacion(request: Request, exc: RequestValidationError):
     errores_personalizados = []
 
     for error in exc.errors():
@@ -52,6 +52,30 @@ async def manejar_errores_validacion(request: Request, exc: RequestValidationErr
             "errores": errores_personalizados
         },
     )
+
+
+async def validation_exception_handler(request: Request, exc: ValidationError):
+    errores = []
+    for err in exc.errors():
+        campo = ".".join(str(x) for x in err["loc"] if x != "body")
+        errores.append({
+            "campo": campo,
+            "mensaje": err["msg"]
+        })
+
+    return JSONResponse(
+        status_code=422,
+        content={
+            "ok": False,
+            "mensaje": "Hay errores en los datos enviados.",
+            "errores": errores
+        }
+    )
+
+
+ """
+
+
 #Formatos importantes que me ayudan a entender lo de arriba
 """ 
 {
