@@ -93,3 +93,13 @@ class ProductoRepository:
         except Exception as e:
             await self.session.rollback()
             raise e 
+        
+
+    # Funcion para traer solo la fila de ubicación imagen de Productos
+    async def obtener_la_fila_ubicacion_imagen(self) -> list | None:
+
+        consulta = select(Producto.ubicacion_imagen).where(Producto.deleted_at == None)
+
+        lista = await self.session.execute(consulta)
+        
+        return lista.scalars().all()
