@@ -1,6 +1,10 @@
 from fastapi import FastAPI, status, Request
 from fastapi.responses import JSONResponse
-
+# En escencia esto creo que no se necesita ya que en docker compose cargó las variables al principio.
+# pero lo dejo para futuras referencias de que cuando quiero tener un .env en un proyecto fuera de docker debo de usar 
+# esto para cargar el .env
+from dotenv import load_dotenv
+load_dotenv()
 #Importo mi funcion que implementa el manejador de excepciones.
 from handlers import register_exception_handlers
 
@@ -10,6 +14,9 @@ from api.upload import router as upload_router
 
 #rutas de mi aplicación Ecommerce.
 from api.producto import router as producto_router
+from api.user import router as user_router
+from api.cart import router as cart_router
+from api.auth import router as auth_router
 
 
 # La idea es que este .py quede lo más limpio posible.
@@ -44,6 +51,9 @@ app.include_router(ejemplo_router)
 app.include_router(upload_router)
 #Rutas de mi app
 app.include_router(producto_router)
+app.include_router(user_router)
+app.include_router(cart_router)
+app.include_router(auth_router)
 
 
 """ Que pasa cuando a mi app llegan rutas que no están, bueno la app
