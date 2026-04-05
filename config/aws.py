@@ -1,9 +1,7 @@
-from dotenv import load_dotenv
 import os
 import boto3
 
 #Recordando un poco para poder subir una imagen a S3 se necesita un client y el nombre del Bucket.
-load_dotenv()
 
 #Cliente
 s3_client = boto3.client(

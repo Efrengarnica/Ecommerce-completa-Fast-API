@@ -2,11 +2,6 @@ from fastapi import APIRouter, status
 from fastapi.responses import JSONResponse
 from schemas.ejemplo import EjemploDto
 
-#Esto sirve para poder ocupar las variables de entorno
-""" from dotenv import load_dotenv
-load_dotenv()
-import os """
-
 #La idea es que ahora aquí se definan todos los endpoints relacionado con ejemplo.
 #Primero se define el router.
 #Para que mi router este asociado a mi app debo de ir a mi app a decirle que este router estará asociado con ella.

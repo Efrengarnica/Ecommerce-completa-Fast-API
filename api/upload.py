@@ -12,9 +12,7 @@ import uuid
 
 #Necesario para comunicacion con AWS
 import boto3
-#Necesario para leer las variables de entorno
-from dotenv import load_dotenv
-load_dotenv()
+
 import os
 
 
