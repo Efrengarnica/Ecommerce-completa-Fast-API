@@ -12,6 +12,7 @@ config = context.config
 
 #Faltaria importar los modelos
 from models.producto import *
+from models.user import User
 
 # Logging config
 if config.config_file_name is not None:
