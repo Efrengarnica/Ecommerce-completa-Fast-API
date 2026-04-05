@@ -8,6 +8,10 @@ from exceptions.producto import ProductoNoEncontrado, ProductoYaExistente, Produ
 from handlers.producto import producto_no_encontrado, producto_ya_existente, producto_no_encontrado_nombre, error_al_borrar_archivos_basura
 from exceptions.s3_exceptions import InvalidImageTypeException, S3UploadException, S3ImageNotFound, S3ImageDeleteError
 from handlers.s3_handler import invalid_image_type_exception, s3_upload_exception, s3_image_not_found, s3_image_delete_error
+from exceptions.auth import NotAuthorization
+from handlers.auth import claves_incorrectas
+from exceptions.user import UsuarioNoEncontrado
+from handlers.user import usuario_no_encontrado
 
 #Aquí vivirá mi manejador de excepciones, será una función que reciba la app y agregue 
 #las excepciones que voy a manejar.
@@ -25,6 +29,7 @@ def register_exception_handlers(app:FastAPI):
     app.add_exception_handler(ProductoNoEncontradoNombre,producto_no_encontrado_nombre)
     app.add_exception_handler(ErrorAlBorrarArchivosBasura,error_al_borrar_archivos_basura)
     app.add_exception_handler(RequestValidationError, validation_exception_handler)
-    
+    app.add_exception_handler(NotAuthorization, claves_incorrectas)
+    app.add_exception_handler(UsuarioNoEncontrado, usuario_no_encontrado)
     
 
